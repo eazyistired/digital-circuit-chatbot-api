@@ -23,7 +23,6 @@ def convert_docs_to_database(database_path, embedding_model_name):
     text_chunks = get_text_chunks_from_docs(docs)
 
     embedding_model = get_embedding_model(embedding_model_name)
-    # FIXME Add some logic to store the database or load the database in a separate function, don't do the whole logic here
     database = convert_text_chunks_to_database(
         text_chunks,
         embedding_model,

@@ -1,0 +1,12 @@
+{
+    "development": {
+        "test": "placeholder",
+        "database_path": "/placeholder"
+    },
+    "testing": {
+        "test": "placeholder"
+    },
+    "production": {
+        "test": "placeholder"
+    }
+}

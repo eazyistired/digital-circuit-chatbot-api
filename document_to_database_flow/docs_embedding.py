@@ -1,6 +1,6 @@
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 
-# TODO Think of a better way to implement this
+# FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement
 # Maybe we can incorporate some of this information in the config files
 model_names_vs_paths = {
