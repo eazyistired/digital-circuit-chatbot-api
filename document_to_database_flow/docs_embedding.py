@@ -1,4 +1,4 @@
-from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings
 
 # FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement
@@ -11,7 +11,7 @@ model_names_vs_paths = {
 }
 
 model_names_vs_classes = {
-    'instructor-xl': HuggingFaceInstructEmbeddings()
+    'instructor-xl': HuggingFaceInstructEmbeddings
 }
 
 def get_embedding_model_from_path(model_path, model_class):
