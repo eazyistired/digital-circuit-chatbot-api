@@ -1,5 +1,5 @@
-from qa_flow import get_qa_chain
-from llm_select import get_tokenizer_and_model
+from .qa_flow import get_qa_chain
+from .llm_select import get_tokenizer_and_model
 
 # FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement

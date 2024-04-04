@@ -3,8 +3,11 @@ from langchain.embeddings import HuggingFaceInstructEmbeddings
 # FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement
 # Maybe we can incorporate some of this information in the config files
+
+models_folder_path = '../../models/'
+
 model_names_vs_paths = {
-    'instructor-xl': '/'
+    'instructor-xl': models_folder_path + 'instructor-xl/'
 }
 
 model_names_vs_classes = {

@@ -1,7 +1,7 @@
-from docs_to_text_chunks import get_text_chunks_from_docs
-from docs_embedding import get_embedding_model
-from pdf_to_docs import get_docs
-from text_chunks_to_database import load_vector_database, store_vector_database
+from .docs_to_text_chunks import get_text_chunks_from_docs
+from .docs_embedding import get_embedding_model
+from .pdf_to_docs import get_docs
+from .text_chunks_to_database import load_vector_database, store_vector_database
 
 def convert_text_chunks_to_database(text_chunks, embedding_model, persist_dir, persist=True):
     store_vector_database(

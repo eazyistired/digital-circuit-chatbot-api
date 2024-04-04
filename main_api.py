@@ -1,8 +1,8 @@
-from document_to_database_flow.docs_to_database_flow import convert_docs_to_database, get_retriever
-from qa_flow.qr_handler import get_tokenizer_and_model, get_chain, ask_question
+from .document_to_database_flow.docs_to_database_flow import convert_docs_to_database, get_retriever
+from .qa_flow.qr_handler import get_tokenizer_and_model, get_chain, ask_question
 
 if __name__ == '__main__':
-    database_path = '/'
+    database_path = '../database'
     embedding_model_name = 'instructor-xl'
     model_name = 'llama-2-7b'
     quantization_config = None
