@@ -1,7 +1,7 @@
-from langchain.chains import RetrievalQA
+from langchain.chains import ConversationalRetrievalChain
 
 def get_qa_chain(llm, retriever, chain_type='stuff', return_source_documents=True):
-    return RetrievalQA.from_chain_type(llm=llm, 
-                                  chain_type=chain_type, 
+    return ConversationalRetrievalChain.from_chain_type(llm=llm, 
+                                #   chain_type=chain_type, 
                                   retriever=retriever, 
                                   return_source_documents=return_source_documents)

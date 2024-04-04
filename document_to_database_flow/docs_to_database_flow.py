@@ -23,10 +23,13 @@ def convert_docs_to_database(database_path, embedding_model_name):
     text_chunks = get_text_chunks_from_docs(docs)
 
     embedding_model = get_embedding_model(embedding_model_name)
-    database = convert_text_chunks_to_database(
+    vector_database = convert_text_chunks_to_database(
         text_chunks,
         embedding_model,
         database_path
     )
 
-    return database
+    return vector_database
+
+def get_retriever(vector_database, search_kwargs={'k': 3}):
+    return vector_database.as_retriever(search_kwargs=search_kwargs)
