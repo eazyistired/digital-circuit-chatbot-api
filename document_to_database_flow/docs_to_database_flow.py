@@ -18,15 +18,29 @@ def convert_text_chunks_to_database(text_chunks, embedding_model, persist_dir, p
 
     return vector_database
 
-def convert_docs_to_database(database_path, embedding_model_name):
-    docs = get_docs(database_path)
+def convert_docs_to_database(documents_database_path, vector_database_path, embedding_model_name):
+    docs = get_docs(documents_database_path)
+
+    # print(f'Docs: {docs}')
+    if docs == []:
+        return
+
     text_chunks = get_text_chunks_from_docs(docs)
 
     embedding_model = get_embedding_model(embedding_model_name)
     vector_database = convert_text_chunks_to_database(
         text_chunks,
         embedding_model,
-        database_path
+        vector_database_path
+    )
+
+    return vector_database
+
+def load_database(persist_dir, embedding_model_name):
+    embedding_model = get_embedding_model(embedding_model_name)
+    vector_database = load_vector_database(
+        persist_dir,
+        embedding_model
     )
 
     return vector_database

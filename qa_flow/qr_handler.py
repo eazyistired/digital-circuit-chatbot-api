@@ -1,5 +1,5 @@
 from .qa_flow import get_qa_chain
-from .llm_select import get_tokenizer_and_model
+from .llm_select import get_tokenizer_and_model as gtm
 
 # FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement
@@ -20,9 +20,8 @@ def get_chain(llm, retriever, chain_type, return_source_documents):
     )
 
 def get_tokenizer_and_model(model_name, quantization_config):
-    return get_tokenizer_and_model(
+    return gtm(
         model_name=model_name,
-        model_path=model_names_vs_paths[model_name],
         quantization_config=quantization_config
     )
 
