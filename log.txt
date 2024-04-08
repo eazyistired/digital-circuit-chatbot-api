@@ -1,0 +1,69 @@
+load INSTRUCTOR_Transformer
+max_seq_length  512
+Ask your question: 
+
+[1m> Entering new RetrievalQA chain...[0m
+
+       <inst> = Instruction
+           <EMPTY> = Empty line
+           <FULL> = Full line
+</TEXTAREA></P>
+<INPUT type="submit" value="Submit">
+
+
+
+[1m> Finished chain.[0m
+Answer: [INST] <>
+        Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+        <>
+
+        
+        Datasheet  2 of 23 V 1.6  
+www.infineon.com/soi    2023 -06-08 6ED223 0S12T  
+1200 V Three Phase Gate Driver with Integrated Bootstrap Diode and OCP  
+ 
+Description  
+The 6ED2230S12T is a high voltage, high speed IGBT with three independent high side and low side referenced 
+output channels for three phas e applications. Proprietary HVIC and latch immune CMOS technologies enable 
+ruggedized monolithic construction. The logic input is compatible with standard CMOS or TTL outputs, down 
+to 3.3 V logic. An over -current protection (OCP) function which terminates all six outputs can also be derived 
+from this resistor. An open drain FAULT signal is provided to indicate that an over -current or undervoltage 
+shutdown has occurred. Fault conditions are cleared automatically after a delay programmed externally via 
+an RC network. The output drivers feature a high -pulse current buffer stage designed for minimum driver
+
+Datasheet  2 of 23 V 1.6  
+www.infineon.com/soi    2023 -06-08 6ED223 0S12T  
+1200 V Three Phase Gate Driver with Integrated Bootstrap Diode and OCP  
+ 
+Description  
+The 6ED2230S12T is a high voltage, high speed IGBT with three independent high side and low side referenced 
+output channels for three phas e applications. Proprietary HVIC and latch immune CMOS technologies enable 
+ruggedized monolithic construction. The logic input is compatible with standard CMOS or TTL outputs, down 
+to 3.3 V logic. An over -current protection (OCP) function which terminates all six outputs can also be derived 
+from this resistor. An open drain FAULT signal is provided to indicate that an over -current or undervoltage 
+shutdown has occurred. Fault conditions are cleared automatically after a delay programmed externally via 
+an RC network. The output drivers feature a high -pulse current buffer stage designed for minimum driver
+
+Datasheet  2 of 23 V 1.6  
+www.infineon.com/soi    2023 -06-08 6ED223 0S12T  
+1200 V Three Phase Gate Driver with Integrated Bootstrap Diode and OCP  
+ 
+Description  
+The 6ED2230S12T is a high voltage, high speed IGBT with three independent high side and low side referenced 
+output channels for three phas e applications. Proprietary HVIC and latch immune CMOS technologies enable 
+ruggedized monolithic construction. The logic input is compatible with standard CMOS or TTL outputs, down 
+to 3.3 V logic. An over -current protection (OCP) function which terminates all six outputs can also be derived 
+from this resistor. An open drain FAULT signal is provided to indicate that an over -current or undervoltage 
+shutdown has occurred. Fault conditions are cleared automatically after a delay programmed externally via 
+an RC network. The output drivers feature a high -pulse current buffer stage designed for minimum driver
+
+        Question: WHat are the typical applications for 6ED2230S12T?
+         [/INST]
+        <inst> = Instruction
+            <EMPTY> = Empty line
+            <FULL> = Full line
+</TEXTAREA></P>
+<INPUT type="submit" value="Submit">
+
+ 
+
