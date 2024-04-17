@@ -18,7 +18,7 @@ def generate_prompt(prompt: str, system_prompt: str = DEFAULT_SYSTEM_PROMPT) -> 
 
 
 def get_system_template():
-    SYSTEM_PROMPT = "Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer."
+    # SYSTEM_PROMPT = "Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer."
 
     template = generate_prompt(
         """
@@ -26,7 +26,7 @@ def get_system_template():
 
         Question: {question}
         """,
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=DEFAULT_SYSTEM_PROMPT,
     )
 
     return template
