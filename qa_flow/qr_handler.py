@@ -1,5 +1,5 @@
 from .qa_flow import get_qa_chain, get_llm_pipeline
-from .llm_prompt import get_prompt, get_system_template
+from .llm_prompt import get_prompt
 from .llm_select import get_tokenizer_and_model as gtm
 from langchain.chains import LLMChain
 from langchain.chains import RetrievalQA
