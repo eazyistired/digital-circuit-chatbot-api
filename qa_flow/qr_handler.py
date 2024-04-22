@@ -10,8 +10,8 @@ from langchain.chains import RetrievalQA
 model_names_vs_paths = {"llama-2-7b": "/"}
 
 
-def get_tokenizer_and_model(model_name, quantization_config):
-    return gtm(model_name=model_name, quantization_config=quantization_config)
+def get_tokenizer_and_model(model_path, quantization_config):
+    return gtm(model_path=model_path, quantization_config=quantization_config)
 
 
 def _ask_question(query, llm, retriever, chat_history):

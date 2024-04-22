@@ -11,6 +11,7 @@ from langchain.chains import RetrievalQA
 from qa_flow.llm_prompt import get_prompt
 from qa_flow.qa_flow import get_llm_pipeline
 import json
+import os
 
 
 def load_config_object(config_object_path):
@@ -19,13 +20,14 @@ def load_config_object(config_object_path):
 
 
 if __name__ == "__main__":
-    config_object_path = "config.json"
+    print(f"Path of script: {os.path.join(os.path.dirname(__file__))} \n\n")
+    script_dir_path = os.path.dirname(__file__)
+    project_dir_path = os.path.dirname(script_dir_path)
+
+    config_object_path = os.path.join(script_dir_path, "config.json")
     configs = load_config_object(config_object_path=config_object_path)
     config = configs["development"]
 
-    documents_database_path = config["documents_database_path"]
-    vector_database_path = config["vector_database_path"]
-    questions_database_path = config["questions_database_path"]
     embedding_model_name = config["embedding_model_name"]
     llm_model_name = config["llm_model_name"]
     convert_to_database = config["convert_docs_to_database"]
@@ -36,21 +38,30 @@ if __name__ == "__main__":
     quantization_config = transformers.BitsAndBytesConfig(load_in_8bit=True)
     chat_history = []
 
+    # PATH CONFIGS
+    documents_database_path = os.path.join(project_dir_path, "database", "documents")
+    vector_database_path = os.path.join(project_dir_path, "database", "vector_store")
+    questions_database_path = os.path.join(project_dir_path, "database", "questions")
+    embedding_model_path = os.path.join(
+        project_dir_path, "models", embedding_model_name
+    )
+    llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
+
     if convert_to_database:
         convert_docs_to_database(
             documents_database_path=documents_database_path,
             vector_database_path=vector_database_path,
-            embedding_model_name=embedding_model_name,
+            embedding_model_path=embedding_model_path,
         )
 
     vector_database = load_database(
-        persist_dir=vector_database_path, embedding_model_name=embedding_model_name
+        persist_dir=vector_database_path, embedding_model_path=embedding_model_path
     )
 
     retriever = get_retriever(vector_database=vector_database)
 
     tokenizer, model = get_tokenizer_and_model(
-        model_name=llm_model_name, quantization_config=quantization_config
+        model_path=llm_model_path, quantization_config=quantization_config
     )
 
     prompt = get_prompt(prompt_selection=prompt_selection)

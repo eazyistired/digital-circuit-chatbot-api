@@ -1,9 +1,6 @@
 {
     "development": {
         "test": "placeholder",
-        "documents_database_path": "../database/documents",
-        "vector_database_path": "../database/vector_store",
-        "questions_database_path": "../database/questions",
         "embedding_model_name": "instructor-xl",
         "llm_model_name": "llama-2-13b-chat-hf",
         "convert_docs_to_database": false,
