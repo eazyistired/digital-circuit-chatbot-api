@@ -3,7 +3,7 @@ from document_to_database_flow.docs_to_database_flow import (
     get_retriever,
     load_database,
 )
-from testing_qa import get_question_list
+from testing_qa import get_testing_dataset, test_llm_on_dataset
 from qa_flow.qr_handler import get_tokenizer_and_model, ask_question
 import transformers
 import torch
@@ -12,6 +12,10 @@ from qa_flow.llm_prompt import get_prompt
 from qa_flow.qa_flow import get_llm_pipeline
 import json
 import os
+import pandas as pd
+from document_to_database_flow.docs_embedding import get_embedding_model
+from ragas.llms import LangchainLLMWrapper
+from evaluation.testing import test_on_dataset
 
 
 def load_config_object(config_object_path):
@@ -19,19 +23,22 @@ def load_config_object(config_object_path):
         return json.load(config_file)
 
 
+CONFIG_TYPE = "development"
+
+
 if __name__ == "__main__":
-    print(f"Path of script: {os.path.join(os.path.dirname(__file__))} \n\n")
     script_dir_path = os.path.dirname(__file__)
     project_dir_path = os.path.dirname(script_dir_path)
 
     config_object_path = os.path.join(script_dir_path, "config.json")
     configs = load_config_object(config_object_path=config_object_path)
-    config = configs["development"]
+    config = configs[CONFIG_TYPE]
 
     embedding_model_name = config["embedding_model_name"]
     llm_model_name = config["llm_model_name"]
     convert_to_database = config["convert_docs_to_database"]
     prompt_selection = config["prompt_selection"]
+    ask_your_own_questions = config["ask_your_own_questions"]
 
     print(f"\n\nConfig object: {json.dumps(config, indent=4)}\n\n")
 
@@ -45,8 +52,12 @@ if __name__ == "__main__":
     embedding_model_path = os.path.join(
         project_dir_path, "models", embedding_model_name
     )
+    testcases_results_folder_path = os.path.join(
+        project_dir_path, "database", "results"
+    )
     llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
 
+    # CODE
     if convert_to_database:
         convert_docs_to_database(
             documents_database_path=documents_database_path,
@@ -71,21 +82,27 @@ if __name__ == "__main__":
         llm=llm_pipeline,
         chain_type="stuff",
         retriever=retriever,
-        return_source_documents=False,
+        return_source_documents=True,
         chain_type_kwargs={"prompt": prompt},
         verbose=False,
     )
 
-    question_list = get_question_list(questions_database_path=questions_database_path)
-    for question in question_list:
+    testing_dataset = get_testing_dataset(
+        questions_database_path=questions_database_path
+    )
+
+    while ask_your_own_questions:
+        question = input("Ask your question:")
+
         result = qa_chain(question)
 
-        # print(f"Question: {result['query']} \n")
-        print(f"Answer: {result['result']} \n \n \n")
         print(
-            f"=================================================================================="
+            "\n\n ===================================================================== \n\n"
         )
-        print(
-            f"=================================================================================="
-        )
-        # print(f"Source Documents: {result['source_documents'][0].page_content} \n")
+
+    test_on_dataset(
+        qa_chain=qa_chain,
+        test_dataset=testing_dataset,
+        config_object=config,
+        testcases_results_folder_path=testcases_results_folder_path,
+    )

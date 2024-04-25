@@ -1,7 +1,7 @@
-from langchain import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 
 
-def generate_prompt(prompt: str, system_prompt: str) -> str:
+def generate_prompt(system_prompt: str, prompt: str) -> str:
     return f"""
     [INST] <>
         {system_prompt}
@@ -13,12 +13,14 @@ def generate_prompt(prompt: str, system_prompt: str) -> str:
 
 def get_template(system_prompt):
     template = generate_prompt(
-        """
-        {context}
+        system_prompt=system_prompt,
+        prompt="""
+        Context: {context}
+        ---
+        How here is the question you need to answer.
 
         Question: {question}
-        """,
-        system_prompt=system_prompt,
+        """.strip(),
     )
 
     return template
@@ -29,6 +31,14 @@ def get_system_prompt(prompt_selection):
     match prompt_selection:
         case "system-prompt":
             return "Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer."
+        case "rag-prompt":
+            return """
+                Using the information contained in the context, give a comprehensive answer to the question.
+                Respond only to the question asked, response should be concise and relevant to the question.
+                Provide the number of the source document when relevant.
+                If the answer cannot be deduced from the context, do not give an answer.
+            """.strip()
+
         case _:
             return """
             You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
