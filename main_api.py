@@ -15,7 +15,7 @@ import os
 import pandas as pd
 from document_to_database_flow.docs_embedding import get_embedding_model
 from ragas.llms import LangchainLLMWrapper
-from evaluation.testing import test_on_dataset
+from evaluation.testing import test_and_evaluate_on_dataset, save_results
 
 
 def load_config_object(config_object_path):
@@ -58,15 +58,17 @@ if __name__ == "__main__":
     llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
 
     # CODE
+    embedding_model = get_embedding_model(model_path=embedding_model_path)
+
     if convert_to_database:
         convert_docs_to_database(
             documents_database_path=documents_database_path,
             vector_database_path=vector_database_path,
-            embedding_model_path=embedding_model_path,
+            embedding_model=embedding_model,
         )
 
     vector_database = load_database(
-        persist_dir=vector_database_path, embedding_model_path=embedding_model_path
+        persist_dir=vector_database_path, embedding_model=embedding_model
     )
 
     retriever = get_retriever(vector_database=vector_database)
@@ -100,9 +102,14 @@ if __name__ == "__main__":
             "\n\n ===================================================================== \n\n"
         )
 
-    test_on_dataset(
+    testcase_results_list = test_and_evaluate_on_dataset(
         qa_chain=qa_chain,
+        embedding_model=embedding_model,
         test_dataset=testing_dataset,
+    )
+
+    save_results(
+        results_list=testcase_results_list,
         config_object=config,
         testcases_results_folder_path=testcases_results_folder_path,
     )
