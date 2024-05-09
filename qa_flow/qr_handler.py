@@ -7,7 +7,6 @@ from langchain.chains import RetrievalQA
 # FIXME Think of a better way to implement this
 # This can be replaced by switch statements but I don't think it would be an improvement
 # Maybe we can incorporate some of this information in the config files
-model_names_vs_paths = {"llama-2-7b": "/"}
 
 
 def get_tokenizer_and_model(model_path, quantization_config):

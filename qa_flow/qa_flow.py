@@ -24,10 +24,13 @@ def get_llm_pipeline(
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=1024,
+        temperature=0.1,
         # temperature=0.001,
         # top_p=0.95,
-        repetition_penalty=1.15,
+        # repetition_penalty=1.15,
+        repetition_penalty=1.1,
         streamer=streamer,
+        # return_full_text=True,
     )
 
     llm_pipeline = HuggingFacePipeline(pipeline=text_pipeline)
