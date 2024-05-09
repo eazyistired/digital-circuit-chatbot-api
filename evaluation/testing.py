@@ -23,14 +23,15 @@ def get_test_results(qa_chain, test_dataset):
 
     results = []
     for query in test_dataset:
-        chain_result = qa_chain(query["question"])
+        chain_result = qa_chain.invoke(query["question"])
 
         result = {
             # To get the last part of the result that has only the answer
             "answer": chain_result["result"].split("[/INST]")[1],
             "question": chain_result["query"],
             "contexts": [
-                source_document for source_document in chain_result["source_documents"]
+                source_document.page_content
+                for source_document in chain_result["source_documents"]
             ],
             "ground_truth": query["ground_truth"],
         }

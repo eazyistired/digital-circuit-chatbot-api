@@ -15,7 +15,21 @@ import os
 import pandas as pd
 from document_to_database_flow.docs_embedding import get_embedding_model
 from ragas.llms import LangchainLLMWrapper
-from evaluation.testing import test_and_evaluate_on_dataset, save_results
+from evaluation.testing import (
+    test_and_evaluate_on_dataset,
+    save_results,
+    get_test_results,
+)
+from evaluation.evaluation import evaluate_with_ragas
+from ragas.metrics import (
+    answer_relevancy,
+    faithfulness,
+    context_recall,
+    context_precision,
+    answer_similarity,
+)
+from datasets import Dataset
+import pickle
 
 
 def load_config_object(config_object_path):
@@ -102,14 +116,32 @@ if __name__ == "__main__":
             "\n\n ===================================================================== \n\n"
         )
 
-    testcase_results_list = test_and_evaluate_on_dataset(
-        qa_chain=qa_chain,
+    # testcase_results_list = test_and_evaluate_on_dataset(
+    #     qa_chain=qa_chain,
+    #     embedding_model=embedding_model,
+    #     test_dataset=testing_dataset,
+    # )
+
+    testcase_results = get_test_results(qa_chain=qa_chain, test_dataset=testing_dataset)
+    rag_df = pd.DataFrame(testcase_results)
+    rag_eval_dataset = Dataset.from_pandas(rag_df)
+
+    testcase_evaluation_results_df = evaluate_with_ragas(
+        dataset=rag_eval_dataset,
+        metrics=[answer_similarity, answer_relevancy],
         embedding_model=embedding_model,
-        test_dataset=testing_dataset,
+        llm_model=llm_pipeline,
     )
 
-    save_results(
-        results_list=testcase_results_list,
-        config_object=config,
-        testcases_results_folder_path=testcases_results_folder_path,
-    )
+    print(f"\n\n{testcase_evaluation_results_df}\n\n")
+
+    # with open("testcase_results.pickle", "wb") as file:
+    #     pickle.dump(rag_eval_dataset, file)
+
+    # print(f"\n\n{json.dumps(rag_eval_dataset.to_dict(), indent=4)}\n\n")
+
+    # save_results(
+    #     results_list=testcase_results_list,
+    #     config_object=config,
+    #     testcases_results_folder_path=testcases_results_folder_path,
+    # )

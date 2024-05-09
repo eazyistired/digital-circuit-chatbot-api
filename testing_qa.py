@@ -15,6 +15,7 @@ from ragas import evaluate
 
 #     print(f"Testing dataset: {testing_dataset}\n\n")
 
+
 #     result = test_llm_on_dataset(
 #         testing_dataset=testing_dataset,
 #         llm=testing_llm,
@@ -23,6 +24,8 @@ from ragas import evaluate
 #     df = result.to_pandas()
 #     print(f"Result for testing dataset: {df.head()}")
 #     df.to_csv("test_dataset_results.csv", sep=",", encoding="utf-8")
+def form_dataset_from_dict(data_samples):
+    return Dataset.from_dict(data_samples)
 
 
 def get_testing_dataset(questions_database_path):
@@ -34,7 +37,7 @@ def get_testing_dataset(questions_database_path):
         "ground_truth": df["Answer"],
     }
 
-    return Dataset.from_dict(data_samples)
+    return form_dataset_from_dict(data_samples=data_samples)
 
 
 def test_llm_on_dataset(

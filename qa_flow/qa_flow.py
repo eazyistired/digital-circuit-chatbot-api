@@ -20,13 +20,15 @@ def get_llm_pipeline(
         tokenizer, skip_prompt=True, skip_special_tokens=True
     )
     text_pipeline = transformers.pipeline(
-        "text-generation",
+        task="text-generation",
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=1024,
-        # temperature=0.001,
+        return_full_text=True,
+        temperature=0.1,
         # top_p=0.95,
-        repetition_penalty=1.15,
+        # repetition_penalty=1.15,
+        repetition_penalty=1.1,
         streamer=streamer,
     )
 

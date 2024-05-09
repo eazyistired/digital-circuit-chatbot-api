@@ -2,7 +2,7 @@
     "development": {
         "ask_your_own_questions": false,
         "embedding_model_name": "instructor-xl",
-        "llm_model_name": "llama-2-13b-chat-hf",
+        "llm_model_name": "llama-2-13b-hf",
         "convert_docs_to_database": false,
         "prompt_selection": "rag-prompt"
     },
