@@ -6,14 +6,6 @@
         "convert_docs_to_database": false,
         "prompt_selection": "rag-prompt"
     },
-    "testing": {
-        "test_on_question_dataset": true,
-        "embedding_model_name": "instructor-xl",
-        "llm_model_name": "llama-2-13b-chat-hf",
-        "convert_docs_to_database": false,
-        "prompt_selection": "rag-prompt"
-    },
-    "production": {
-        "test": "placeholder"
-    }
+    "testing": {},
+    "production": {}
 }
