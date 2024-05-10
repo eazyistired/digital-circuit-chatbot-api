@@ -126,19 +126,19 @@ if __name__ == "__main__":
     rag_df = pd.DataFrame(testcase_results)
     rag_eval_dataset = Dataset.from_pandas(rag_df)
 
-    testcase_evaluation_results_df = evaluate_with_ragas(
-        dataset=rag_eval_dataset,
-        metrics=[answer_similarity, answer_relevancy],
-        embedding_model=embedding_model,
-        llm_model=llm_pipeline,
-    )
+    # testcase_evaluation_results_df = evaluate_with_ragas(
+    #     dataset=rag_eval_dataset,
+    #     metrics=[answer_similarity, answer_relevancy],
+    #     embedding_model=embedding_model,
+    #     llm_model=llm_pipeline,
+    # )
 
-    print(f"\n\n{testcase_evaluation_results_df}\n\n")
+    # print(f"\n\n{testcase_evaluation_results_df}\n\n")
 
     # with open("testcase_results.pickle", "wb") as file:
     #     pickle.dump(rag_eval_dataset, file)
 
-    # print(f"\n\n{json.dumps(rag_eval_dataset.to_dict(), indent=4)}\n\n")
+    print(f"\n\n{json.dumps(rag_eval_dataset.to_dict(), indent=4)}\n\n")
 
     # save_results(
     #     results_list=testcase_results_list,

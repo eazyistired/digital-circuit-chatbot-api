@@ -24,7 +24,7 @@ def get_llm_pipeline(
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=1024,
-        return_full_text=True,
+        return_full_text=False,
         temperature=0.1,
         # top_p=0.95,
         # repetition_penalty=1.15,
