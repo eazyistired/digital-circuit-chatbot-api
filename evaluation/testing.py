@@ -23,7 +23,7 @@ def get_test_results(qa_chain, test_dataset):
 
     results = []
     for query in test_dataset:
-        chain_result = qa_chain(query["question"])
+        chain_result = qa_chain.invoke(query["question"])
 
         result = {
             # To get the last part of the result that has only the answer
