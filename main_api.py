@@ -3,11 +3,11 @@ from document_to_database_flow.docs_to_database_flow import (
     get_retriever,
     load_database,
 )
-from testing_qa import get_testing_dataset, test_llm_on_dataset
-from qa_flow.qr_handler import get_tokenizer_and_model, ask_question
+from testing_qa import get_testing_dataset
+from qa_flow.qr_handler import get_tokenizer_and_model
 import transformers
 import torch
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from qa_flow.llm_prompt import get_prompt
 from qa_flow.qa_flow import get_llm_pipeline
 import json
@@ -24,6 +24,76 @@ def load_config_object(config_object_path):
 
 
 CONFIG_TYPE = "development"
+
+
+def get_qa_chain():
+    script_dir_path = os.path.dirname(__file__)
+    project_dir_path = os.path.dirname(script_dir_path)
+
+    config_object_path = os.path.join(script_dir_path, "config.json")
+    configs = load_config_object(config_object_path=config_object_path)
+    config = configs[CONFIG_TYPE]
+
+    embedding_model_name = config["embedding_model_name"]
+    llm_model_name = config["llm_model_name"]
+    convert_to_database = config["convert_docs_to_database"]
+    prompt_selection = config["prompt_selection"]
+    ask_your_own_questions = config["ask_your_own_questions"]
+
+    print(f"\n\nConfig object: {json.dumps(config, indent=4)}\n\n")
+
+    quantization_config = transformers.BitsAndBytesConfig(load_in_8bit=True)
+    chat_history = []
+
+    # PATH CONFIGS
+    documents_database_path = os.path.join(project_dir_path, "database", "documents")
+    vector_database_path = os.path.join(project_dir_path, "database", "vector_store")
+    questions_database_path = os.path.join(project_dir_path, "database", "questions")
+    embedding_model_path = os.path.join(
+        project_dir_path, "models", embedding_model_name
+    )
+    testcases_results_folder_path = os.path.join(
+        project_dir_path, "database", "results"
+    )
+    llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
+
+    # CODE
+    embedding_model = get_embedding_model(model_path=embedding_model_path)
+
+    if convert_to_database:
+        convert_docs_to_database(
+            documents_database_path=documents_database_path,
+            vector_database_path=vector_database_path,
+            embedding_model=embedding_model,
+        )
+
+    vector_database = load_database(
+        persist_dir=vector_database_path, embedding_model=embedding_model
+    )
+
+    retriever = get_retriever(vector_database=vector_database)
+
+    tokenizer, model = get_tokenizer_and_model(
+        model_path=llm_model_path, quantization_config=quantization_config
+    )
+
+    prompt = get_prompt(prompt_selection=prompt_selection)
+    llm_pipeline = get_llm_pipeline(model=model, tokenizer=tokenizer)
+
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm_pipeline,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": prompt},
+        verbose=False,
+    )
+
+    return qa_chain
+
+
+def generate_response(qa_chain, query):
+    return qa_chain.invoke(query)
 
 
 if __name__ == "__main__":
@@ -96,7 +166,7 @@ if __name__ == "__main__":
     while ask_your_own_questions:
         question = input("Ask your question:")
 
-        result = qa_chain(question)
+        result = qa_chain.invoke(question)
 
         print(
             "\n\n ===================================================================== \n\n"

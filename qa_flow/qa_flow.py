@@ -1,5 +1,5 @@
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain import HuggingFacePipeline
 import transformers
 
 
@@ -17,20 +17,20 @@ def get_llm_pipeline(
     tokenizer,
 ):
     streamer = transformers.TextStreamer(
-        tokenizer, skip_prompt=True, skip_special_tokens=True
+        # FIXME Is this skip_prompt an issue?
+        tokenizer,
+        skip_prompt=True,
+        skip_special_tokens=True,
     )
     text_pipeline = transformers.pipeline(
         "text-generation",
         model=model,
         tokenizer=tokenizer,
         max_new_tokens=1024,
-        temperature=0.1,
         # temperature=0.001,
         # top_p=0.95,
-        # repetition_penalty=1.15,
-        repetition_penalty=1.1,
-        streamer=streamer,
-        # return_full_text=True,
+        repetition_penalty=1.15,
+        # streamer=streamer,
     )
 
     llm_pipeline = HuggingFacePipeline(pipeline=text_pipeline)

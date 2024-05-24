@@ -3,9 +3,9 @@ from langchain_core.prompts import PromptTemplate
 
 def generate_prompt(system_prompt: str, prompt: str) -> str:
     return f"""
-    [INST] <>
+    <s>[INST] <<SYS>>
         {system_prompt}
-        <>
+    <</SYS>>
 
         {prompt} [/INST]
     """.strip()
