@@ -22,13 +22,33 @@ def get_test_results(qa_chain, test_dataset):
     """
 
     results = []
+    inference_time_periods = []
     for query in test_dataset:
-        chain_result = qa_chain.invoke(query["question"])
+        start_time = time.time()
+        chain_result = qa_chain.invoke(
+            {
+                "question": query["question"],
+                "chat_history": [],
+                "ceva": "",
+            },
+            return_only_outputs=True,
+        )
+        end_time = time.time()
+
+        inference_time_periods.append(end_time - start_time)
+
+        delimiter = "[/INST]"
+        index = chain_result["answer"].find(delimiter)
+        answer = (
+            chain_result["answer"][index + len(delimiter) :]
+            if index != -1
+            else chain_result["answer"]
+        )
 
         result = {
             # To get the last part of the result that has only the answer
-            "answer": chain_result["result"].split("[/INST]")[1],
-            "question": chain_result["query"],
+            "answer": answer,
+            "question": query["question"],
             "contexts": [
                 source_document for source_document in chain_result["source_documents"]
             ],
@@ -36,7 +56,14 @@ def get_test_results(qa_chain, test_dataset):
         }
 
         results.append(result)
-    return results
+
+    sum = 0
+    for inference_time in inference_time_periods:
+        sum += inference_time
+    average_inference_time = sum / len(inference_time_periods)
+
+    print(f"\n\n\t\t\t Average inference time: {average_inference_time}\t\t\t\n\n")
+    return results, average_inference_time
 
 
 def store_metric_in_results(
@@ -53,7 +80,10 @@ def store_metric_in_results(
 
 
 def save_results(
-    testcases_results_folder_path, results_list: list, config_object: dict
+    testcases_results_folder_path,
+    results_list: list,
+    config_object: dict,
+    average_inference_time,
 ):
     testcase_results_nametag = (
         f"test_{time.strftime('%d_%m_%Y__%H_%M_%S', time.localtime())}"
@@ -76,6 +106,7 @@ def save_results(
         "w",
     ) as file:
         json.dump(config_object, file, indent=4)
+        json.dump(average_inference_time, file)
 
     # Store results to csv
     results_df.to_csv(
@@ -93,7 +124,7 @@ def test_and_evaluate_on_dataset(
     embedding_model,
     test_dataset,
 ):
-    testcase_results_list = get_test_results(
+    testcase_results_list, average_inference_time = get_test_results(
         qa_chain=qa_chain, test_dataset=test_dataset
     )
 
@@ -107,7 +138,7 @@ def test_and_evaluate_on_dataset(
         metric_scores=metric_scores,
     )
 
-    return testcase_results_list
+    return testcase_results_list, average_inference_time
 
 
 # FIXME Add dynamic metric calculator

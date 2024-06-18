@@ -16,6 +16,8 @@ import pandas as pd
 from document_to_database_flow.docs_embedding import get_embedding_model
 from ragas.llms import LangchainLLMWrapper
 from evaluation.testing import test_and_evaluate_on_dataset, save_results
+from langchain.memory import ConversationBufferMemory
+from langchain.chains.question_answering import load_qa_chain
 
 
 def load_config_object(config_object_path):
@@ -80,16 +82,54 @@ def get_qa_chain():
     prompt = get_prompt(prompt_selection=prompt_selection)
     llm_pipeline = get_llm_pipeline(model=model, tokenizer=tokenizer)
 
-    qa_chain = RetrievalQA.from_chain_type(
+    # qa_chain = RetrievalQA.from_chain_type(
+    #     llm=llm_pipeline,
+    #     chain_type="stuff",
+    #     retriever=retriever,
+    #     return_source_documents=True,
+    #     chain_type_kwargs={"prompt": prompt},
+    #     verbose=False,
+    # )
+
+    qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm_pipeline,
-        chain_type="stuff",
         retriever=retriever,
         return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt},
-        verbose=False,
+        verbose=True,
+        combine_docs_chain_kwargs={"prompt": prompt},
     )
 
     return qa_chain
+
+
+def get_retriever_from_vector_db(vector_database):
+    return get_retriever(vector_database=vector_database)
+
+
+def get_embedding_model_from_path(embedding_model_path):
+    return get_embedding_model(model_path=embedding_model_path)
+
+
+def get_vector_database_from_path(vector_database_path, embedding_model):
+    return load_database(
+        persist_dir=vector_database_path, embedding_model=embedding_model
+    )
+
+
+def convert_pdfs_to_database(
+    documents_database_path, vector_database_path, embedding_model
+):
+    convert_docs_to_database(
+        documents_database_path=documents_database_path,
+        vector_database_path=vector_database_path,
+        embedding_model=embedding_model,
+    )
+
+    vector_database = load_database(
+        persist_dir=vector_database_path, embedding_model=embedding_model
+    )
+
+    return vector_database
 
 
 def generate_response(qa_chain, query):
@@ -150,29 +190,56 @@ if __name__ == "__main__":
     prompt = get_prompt(prompt_selection=prompt_selection)
     llm_pipeline = get_llm_pipeline(model=model, tokenizer=tokenizer)
 
-    qa_chain = RetrievalQA.from_chain_type(
+    # qa_chain = RetrievalQA.from_chain_type(
+    #     llm=llm_pipeline,
+    #     chain_type="stuff",
+    #     retriever=retriever,
+    #     return_source_documents=True,
+    #     chain_type_kwargs={"prompt": prompt},
+    #     verbose=False,
+    # )
+
+    # qa_chain = load_qa_chain(
+    #     llm_pipeline,
+    #     chain_type="stuff",
+    #     memory=memory,
+    #     prompt=prompt,
+    #     verbose=True,
+    #     # return_source_documents=True,
+    #     # retriever=retriever,
+    # )
+
+    qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm_pipeline,
-        chain_type="stuff",
         retriever=retriever,
         return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt},
         verbose=False,
+        combine_docs_chain_kwargs={"prompt": prompt},
     )
 
-    testing_dataset = get_testing_dataset(
-        questions_database_path=questions_database_path
-    )
-
+    chat_history = []
     while ask_your_own_questions:
         question = input("Ask your question:")
 
-        result = qa_chain.invoke(question)
+        result = qa_chain.invoke(
+            {"question": question, "ceva": str(chat_history), "chat_history": []}
+        )
+
+        print(
+            f"\n\n\t\t\t\tResult: {result['answer'].split('Helpful Answer')[-1]}\t\t\t\n\n"
+        )
+
+        chat_history.append((question, result["answer"].split("Helpful Answer")[-1]))
 
         print(
             "\n\n ===================================================================== \n\n"
         )
 
-    testcase_results_list = test_and_evaluate_on_dataset(
+    testing_dataset = get_testing_dataset(
+        questions_database_path=questions_database_path
+    )
+
+    testcase_results_list, average_inference_time = test_and_evaluate_on_dataset(
         qa_chain=qa_chain,
         embedding_model=embedding_model,
         test_dataset=testing_dataset,
@@ -182,4 +249,5 @@ if __name__ == "__main__":
         results_list=testcase_results_list,
         config_object=config,
         testcases_results_folder_path=testcases_results_folder_path,
+        average_inference_time=average_inference_time,
     )

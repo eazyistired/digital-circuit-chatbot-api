@@ -16,10 +16,12 @@ def get_template(system_prompt):
         system_prompt=system_prompt,
         prompt="""
         Context: {context}
-        ---
-        Now here is the question you need to answer.
+
+        Chat history: {ceva}
 
         Question: {question}
+
+        Answer:
         """.strip(),
     )
 
@@ -42,7 +44,7 @@ def get_system_prompt(prompt_selection):
             return """
             You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
 
-            If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+            If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct.
             """.strip()
 
 
@@ -52,5 +54,5 @@ def get_prompt(prompt_selection):
 
     return PromptTemplate(
         template=template,
-        input_variables=["context", "question"],
+        input_variables=["ceva", "question", "context"],
     )

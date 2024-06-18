@@ -16,12 +16,12 @@ def get_llm_pipeline(
     model,
     tokenizer,
 ):
-    streamer = transformers.TextStreamer(
-        # FIXME Is this skip_prompt an issue?
-        tokenizer,
-        skip_prompt=True,
-        skip_special_tokens=True,
-    )
+    # streamer = transformers.TextStreamer(
+    #     # FIXME Is this skip_prompt an issue?
+    #     tokenizer,
+    #     skip_prompt=True,
+    #     skip_special_tokens=True,
+    # )
     text_pipeline = transformers.pipeline(
         "text-generation",
         model=model,
