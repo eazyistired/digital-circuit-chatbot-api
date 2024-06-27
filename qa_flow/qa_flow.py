@@ -1,5 +1,5 @@
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
-from langchain import HuggingFacePipeline
+from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 import transformers
 
 

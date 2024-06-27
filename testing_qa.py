@@ -30,7 +30,7 @@ def get_testing_dataset(questions_database_path):
 
     data_samples = {
         "question": df["Question"],
-        "contexts": list([list(x) for x in df["Context"]]),
+        # "contexts": list([list(x) for x in df["Context"]]),
         "ground_truth": df["Answer"],
     }
 

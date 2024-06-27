@@ -7,16 +7,14 @@ from testing_qa import get_testing_dataset
 from qa_flow.qr_handler import get_tokenizer_and_model
 import transformers
 import torch
-from langchain.chains import RetrievalQA, ConversationalRetrievalChain
+from langchain.chains import ConversationalRetrievalChain
 from qa_flow.llm_prompt import get_prompt
 from qa_flow.qa_flow import get_llm_pipeline
 import json
 import os
 import pandas as pd
 from document_to_database_flow.docs_embedding import get_embedding_model
-from ragas.llms import LangchainLLMWrapper
 from evaluation.testing import test_and_evaluate_on_dataset, save_results
-from langchain.memory import ConversationBufferMemory
 from langchain.chains.question_answering import load_qa_chain
 
 
@@ -40,23 +38,18 @@ def get_qa_chain():
     llm_model_name = config["llm_model_name"]
     convert_to_database = config["convert_docs_to_database"]
     prompt_selection = config["prompt_selection"]
-    ask_your_own_questions = config["ask_your_own_questions"]
 
     print(f"\n\nConfig object: {json.dumps(config, indent=4)}\n\n")
 
     quantization_config = transformers.BitsAndBytesConfig(load_in_8bit=True)
-    chat_history = []
 
     # PATH CONFIGS
     documents_database_path = os.path.join(project_dir_path, "database", "documents")
     vector_database_path = os.path.join(project_dir_path, "database", "vector_store")
-    questions_database_path = os.path.join(project_dir_path, "database", "questions")
     embedding_model_path = os.path.join(
         project_dir_path, "models", embedding_model_name
     )
-    testcases_results_folder_path = os.path.join(
-        project_dir_path, "database", "results"
-    )
+
     llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
 
     # CODE
@@ -81,15 +74,6 @@ def get_qa_chain():
 
     prompt = get_prompt(prompt_selection=prompt_selection)
     llm_pipeline = get_llm_pipeline(model=model, tokenizer=tokenizer)
-
-    # qa_chain = RetrievalQA.from_chain_type(
-    #     llm=llm_pipeline,
-    #     chain_type="stuff",
-    #     retriever=retriever,
-    #     return_source_documents=True,
-    #     chain_type_kwargs={"prompt": prompt},
-    #     verbose=False,
-    # )
 
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm_pipeline,
@@ -168,7 +152,9 @@ if __name__ == "__main__":
     llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
 
     # CODE
-    embedding_model = get_embedding_model(model_path=embedding_model_path)
+    embedding_model = get_embedding_model(
+        model_path=embedding_model_path, model_name=embedding_model_name
+    )
 
     if convert_to_database:
         convert_docs_to_database(
@@ -190,30 +176,11 @@ if __name__ == "__main__":
     prompt = get_prompt(prompt_selection=prompt_selection)
     llm_pipeline = get_llm_pipeline(model=model, tokenizer=tokenizer)
 
-    # qa_chain = RetrievalQA.from_chain_type(
-    #     llm=llm_pipeline,
-    #     chain_type="stuff",
-    #     retriever=retriever,
-    #     return_source_documents=True,
-    #     chain_type_kwargs={"prompt": prompt},
-    #     verbose=False,
-    # )
-
-    # qa_chain = load_qa_chain(
-    #     llm_pipeline,
-    #     chain_type="stuff",
-    #     memory=memory,
-    #     prompt=prompt,
-    #     verbose=True,
-    #     # return_source_documents=True,
-    #     # retriever=retriever,
-    # )
-
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm_pipeline,
         retriever=retriever,
         return_source_documents=True,
-        verbose=False,
+        verbose=True,
         combine_docs_chain_kwargs={"prompt": prompt},
     )
 
