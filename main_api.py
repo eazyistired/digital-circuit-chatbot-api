@@ -53,7 +53,7 @@ def get_qa_chain():
     llm_model_path = os.path.join(project_dir_path, "models", llm_model_name)
 
     # CODE
-    embedding_model = get_embedding_model(model_path=embedding_model_path)
+    embedding_model = get_embedding_model(model_path=embedding_model_path, model_name=llm_model_name)
 
     if convert_to_database:
         convert_docs_to_database(
